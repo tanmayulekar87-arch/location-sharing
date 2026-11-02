@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="mr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Location Sharing</title>
+</head>
+<body>
+  <h2>Live Location Sharing</h2>
+
+  <button onclick="startSharing()">Share My Location</button>
+  <button onclick="stopSharing()">Stop Sharing</button>
+
+  <p id="status">Location sharing बंद आहे.</p>
+
+  <script>
+    let watchId = null;
+
+    function startSharing() {
+      if (watchId !== null) return;
+
+      if (!navigator.geolocation) {
+        document.getElementById("status").textContent =
+          "Location उपलब्ध नाही.";
+        return;
+      }
+
+      watchId = navigator.geolocation.watchPosition(
+        function(position) {
+          const lat = position.coords.latitude;
+          const lon = position.coords.longitude;
+
+          document.getElementById("status").innerHTML =
+            "Location sharing सुरू आहे.<br>" +
+            "Latitude: " + lat + "<br>" +
+            "Longitude: " + lon;
+        },
+        function(error) {
+          document.getElementById("status").textContent =
+            "Location मिळालं नाही. परवानगी तपासा.";
+          watchId = null;
+        },
+        { enableHighAccuracy: true }
+      );
+    }
+
+    function stopSharing() {
+      if (watchId !== null) {
+        navigator.geolocation.clearWatch(watchId);
+        watchId = null;
+      }
+
+      document.getElementById("status").textContent =
+        "Location sharing बंद आहे.";
+    }
+  </script>
+</body>
+</html>
